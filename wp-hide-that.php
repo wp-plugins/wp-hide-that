@@ -3,7 +3,7 @@
 Plugin Name: WP-Hide That
 Plugin URI: http://njarb.com/contact-us
 Description: Allows you to hide certain classes and IDs on some or all of your pages and posts. Very easy to turn on and off.
-Version: 1.1
+Version: 1.2
 Author: Cyle Conoly
 Author URI: http://cconoly.com
 License: GPL2
@@ -62,7 +62,7 @@ function hidethat_meta_box_display($post, $metabox) {
       }else{
       echo ' <strong>HIDING</strong>';
       }
-  echo '</b> the classes/IDs '.get_option('wpht_class2hide').'.<br />';
+  echo '</b> the objects.<br />';
     
   //input field  
   echo '<select name="wp_hidetitle">';
@@ -79,7 +79,7 @@ function hidethat_meta_box_display($post, $metabox) {
       }
   echo '>Hide Objects On This Page</option>';
   echo '</select>';
-  echo '<br />Custom CSS selectors for this page only: <input type="text" name="wp_selectors" size="20" value="'.$wpht_selectors[$wpht_id].'"/> Separate with commas. Use a dot for classes (.class) and a hash for IDs (#id). Leave blank to use global selectors defined in WP-Hide That settings page.';
+  echo '<br /><strong>CSS Selectors For This Page Only:</strong> <input type="text" name="wp_selectors" size="20" value="'.$wpht_selectors[$wpht_id].'"/> Separate with commas. Use a dot for classes (.class) and a hash for IDs (#id). Leave blank to use the global selectors.';
   echo '<br />Current selectors: <strong>';
   if ($wpht_selectors[$wpht_id])
     {
@@ -148,13 +148,21 @@ $wpht_id=get_the_ID();
 $wpht_class2hide=get_option('wpht_class2hide');
 $wpht_selectors=get_option('wpht_selectors');
 if($wpht_id && in_array($wpht_id,$wpht_array) && $wpht_class2hide!=='' && $wpht_selectors[$wpht_id]==''){
+  if (strpos(strrev($wpht_class2hide), ',') === 0)
+    {
+    $wpht_class2hide=substr($wpht_class2hide, 0, -1);
+    }  
   $wpht_class2hide=str_replace(' ','',$wpht_class2hide);
   $wpht_class2hide=str_replace(',',', ',$wpht_class2hide);
   echo '<style type="text/css">'.$wpht_class2hide.'{display: none !important;}</style>';
 }else if ($wpht_id && in_array($wpht_id,$wpht_array) && $wpht_selectors[$wpht_id]!=='')
 {
+  if (strpos(strrev($wpht_selectors[$wpht_id]), ',') === 0)
+    {
+    $wpht_selectors[$wpht_id]=substr($wpht_selectors[$wpht_id], 0, -1);
+    }
   $wpht_selectors[$wpht_id]=str_replace(' ','',$wpht_selectors[$wpht_id]);
-  $wpht_selectors[$wpht_id]=str_replace(',',', ',$wpht_selectors[$wpht_id]);
+  $wpht_selectors[$wpht_id]=str_replace(',',', ',$wpht_selectors[$wpht_id]); 
   echo '<style type="text/css">'.$wpht_selectors[$wpht_id].'{display: none !important;}</style>';
 }
 }

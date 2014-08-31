@@ -140,7 +140,11 @@ $wpht_array=get_option('wpht_idstohide');
         <div class="postbox" style="width:100%;">
           <div class="inside">
             <form name="oscimp_form" id="wpht_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-              Global Classes/IDs to Hide: <input type="text" name="wpht_class2hide" value="<?php echo get_option('wpht_class2hide'); ?>" size="20" /> Separate by comma. Use a dot for classes (.class) and a hash for IDs (#id). This will be ignored if a page or post has selectors chosen for only that page or post. You can edit the per-page/post selectors in the page editor.
+              <ul><li>-CSS Selectors can be classes or IDs. Classes must begin with a dot (.classname) and IDs must begin with a hash (#idname).</li>
+              <li>-Selectors listed below in the "Global Selectors" box will apply to all pages that are set to Hide the objects.</li>
+              <li>-If selectors are specified in the page or post editor then they will be used instead of the global selectors for that page only.</li>
+              </ul>
+              <strong>CSS Global Selectors:</strong> <input type="text" name="wpht_class2hide" value="<?php echo get_option('wpht_class2hide'); ?>" size="20" /> Separate by comma. 
               <table id="wpht_table" class="display">
                 <thead>
                   <tr>
