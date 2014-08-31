@@ -3,7 +3,7 @@
 Plugin Name: WP-Hide That!
 Plugin URI: http://njarb.com/contact-us
 Description: Allows you to hide certain classes and IDs on some or all of your pages and posts. Very easy to turn on and off.
-Version: 0.2
+Version: 1.0
 Author: Cyle Conoly
 Author URI: http://cconoly.com
 License: GPL2
