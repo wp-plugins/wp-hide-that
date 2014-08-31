@@ -85,7 +85,7 @@ function hidethat_meta_box_display($post, $metabox) {
     {
     echo $wpht_selectors[$wpht_id];
     }else if ($wpht_global_sel){
-    echo $wpht_global_sel; 
+    echo $wpht_global_sel.' (global selectors)'; 
     }else {
     echo 'none';
     }
