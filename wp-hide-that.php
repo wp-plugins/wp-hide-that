@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: WP-Hide That!
+Plugin Name: WP-Hide That
 Plugin URI: http://njarb.com/contact-us
 Description: Allows you to hide certain classes and IDs on some or all of your pages and posts. Very easy to turn on and off.
 Version: 1.0
@@ -25,7 +25,7 @@ function add_hidethat_meta_box() {
   foreach ( $screens as $screen ) {
    add_meta_box( 
          'wp-hidethat',
-         'WP-Hide That!',
+         'WP-Hide That',
          'hidethat_meta_box_display',
          $screen,
          'normal',
@@ -58,7 +58,7 @@ function hidethat_meta_box_display($post, $metabox) {
       }else{
       echo ' <strong>HIDING</strong>';
       }
-  echo '</b> the classes/IDs '.get_option('wpht_class2hide').'. To change the objects that are being hidden, go to the WP-Hide That! settings page.<br /><br />';
+  echo '</b> the classes/IDs '.get_option('wpht_class2hide').'. To change the objects that are being hidden, go to the WP-Hide That settings page.<br /><br />';
     
   //input field  
   echo '<select name="wp_hidetitle">';
@@ -115,7 +115,7 @@ function wpht_admin() {
     include_once('wpht_options.php');  
 }  
 function wpht_admin_actions() {  
-  add_options_page("WP-HideThat", "WP-Hide That!", "manage_options", "WP-HideThat", "wpht_admin");          
+  add_options_page("WP-HideThat", "WP-Hide That", "manage_options", "WP-HideThat", "wpht_admin");          
   }  
 add_action('admin_menu', 'wpht_admin_actions');
 
