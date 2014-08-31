@@ -5,8 +5,11 @@ if ( !current_user_can( 'manage_options' ) )  {
 
 //add if not already there
 $wpht_array=array();
+$wpht_selectors=array();
 add_option('wpht_idstohide',$wpht_array);
 add_option('wpht_class2hide','');
+add_option('wpht_selectors',$wpht_selectors);
+$wpht_selectors=get_option('wpht_selectors');
 
 $wpht_array=get_option('wpht_idstohide');
 //save options
@@ -137,15 +140,16 @@ $wpht_array=get_option('wpht_idstohide');
         <div class="postbox" style="width:100%;">
           <div class="inside">
             <form name="oscimp_form" id="wpht_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
-              Classes/IDs to Hide: <input type="text" name="wpht_class2hide" value="<?php echo get_option('wpht_class2hide'); ?>" size="20" /> Separate by comma. Use a dot for classes (.class) and a hash for IDs (#id).
+              Global Classes/IDs to Hide: <input type="text" name="wpht_class2hide" value="<?php echo get_option('wpht_class2hide'); ?>" size="20" /> Separate by comma. Use a dot for classes (.class) and a hash for IDs (#id). This will be ignored if a page or post has selectors chosen for only that page or post. You can edit the per-page/post selectors in the page editor.
               <table id="wpht_table" class="display">
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>Post Date</th>
+                    <th>Modification Date</th>
                     <th>Title</th>
                     <th>Page/Post</th>
                     <th>Current Status</th>
+                    <th>Selectors</th>
                     <th>Edit</th>
                   </tr>
                 </thead>
@@ -161,8 +165,16 @@ $wpht_array=get_option('wpht_idstohide');
                     $current_status='Showing';
                     $wpht_isinarray=false;
                     }
-                  echo '<tr><td>'.$value->ID.'</td><td>'.$value->post_date.'</td><td>'.$value->post_title.'</td><td>'.$value->post_type.'</td><td>'.$current_status.'</td><td>';
-                  echo '<select name="wp_hidetitle_'.$value->ID.'" id="wp_hidetitle_'.$value->ID.'">';
+                  echo '<tr><td>'.$value->ID.'</td><td>'.$value->post_date.'</td><td>'.$value->post_title.'</td><td>'.$value->post_type.'</td><td>'.$current_status.'</td>';
+                  echo '<td>';
+                  if ($wpht_selectors[$value->ID])
+                    {
+                    echo $wpht_selectors[$value->ID];
+                    }else if ($current_status=='Hiding'){
+                    echo get_option('wpht_class2hide').'(global)';
+                    }
+                  echo '</td>';
+                  echo '<td><select name="wp_hidetitle_'.$value->ID.'" id="wp_hidetitle_'.$value->ID.'">';
                   echo '<option value="show"';
                   if(!$wpht_isinarray)
                     {
@@ -182,7 +194,7 @@ $wpht_array=get_option('wpht_idstohide');
                 </tbody>
                 <tfoot>
                   <tr>
-                    <th colspan="6" style="text-align:center"><a onclick="hide_all()" style="cursor:pointer;padding:0px 15px;">Change All Visible/Filtered To "Hide Objects"</a><input class="button-primary" type="submit" name="Submit" value="Save Settings" style="margin-bottom:2px;" onclick="wpht_submit()" /><a onclick="show_all()" style="cursor:pointer;padding:0px 15px;">Change All Visible/Filtered To "Show Objects"</a><br />Note:This only saves what is visible/filtered. If you searched for a post, then only the filtered ones will be saved. Clear the search box to remove the filter and save all.</td>
+                    <th colspan="7" style="text-align:center"><a onclick="hide_all()" style="cursor:pointer;padding:0px 15px;">Change All Visible/Filtered To "Hide Objects"</a><input class="button-primary" type="submit" name="Submit" value="Save Settings" style="margin-bottom:2px;" onclick="wpht_submit()" /><a onclick="show_all()" style="cursor:pointer;padding:0px 15px;">Change All Visible/Filtered To "Show Objects"</a><br />Note:This only saves what is visible/filtered. If you searched for a post, then only the filtered ones will be saved. Clear the search box to remove the filter and save all.</td>
                   </tr>
                 </tfoot>
               </table>              

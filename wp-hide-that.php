@@ -3,7 +3,7 @@
 Plugin Name: WP-Hide That
 Plugin URI: http://njarb.com/contact-us
 Description: Allows you to hide certain classes and IDs on some or all of your pages and posts. Very easy to turn on and off.
-Version: 1.0
+Version: 1.1
 Author: Cyle Conoly
 Author URI: http://cconoly.com
 License: GPL2
@@ -36,9 +36,13 @@ function add_hidethat_meta_box() {
 
 function hidethat_meta_box_display($post, $metabox) {
   $wpht_array=array();
+  $wpht_selectros=array();
   add_option('wpht_idstohide',$wpht_array);
   add_option('wpht_class2hide','');
+  add_option('wpht_selectors',$wpht_selectros);
   $wpht_array=get_option('wpht_idstohide');
+  $wpht_global_sel=get_option('wpht_class2hide');
+  $wpht_selectors=get_option('wpht_selectors');
   $wpht_id=get_the_ID();
   //see if in array
   if (in_array($wpht_id,$wpht_array))
@@ -58,7 +62,7 @@ function hidethat_meta_box_display($post, $metabox) {
       }else{
       echo ' <strong>HIDING</strong>';
       }
-  echo '</b> the classes/IDs '.get_option('wpht_class2hide').'. To change the objects that are being hidden, go to the WP-Hide That settings page.<br /><br />';
+  echo '</b> the classes/IDs '.get_option('wpht_class2hide').'.<br />';
     
   //input field  
   echo '<select name="wp_hidetitle">';
@@ -75,6 +79,18 @@ function hidethat_meta_box_display($post, $metabox) {
       }
   echo '>Hide Objects On This Page</option>';
   echo '</select>';
+  echo '<br />Custom CSS selectors for this page only: <input type="text" name="wp_selectors" size="20" value="'.$wpht_selectors[$wpht_id].'"/> Separate with commas. Use a dot for classes (.class) and a hash for IDs (#id). Leave blank to use global selectors defined in WP-Hide That settings page.';
+  echo '<br />Current selectors: <strong>';
+  if ($wpht_selectors[$wpht_id])
+    {
+    echo $wpht_selectors[$wpht_id];
+    }else if ($wpht_global_sel){
+    echo $wpht_global_sel; 
+    }else {
+    echo 'none';
+    }
+  echo '</strong>';
+    
   }
   
 function hidethat_meta_box_save(){
@@ -87,8 +103,11 @@ function hidethat_meta_box_save(){
     return;
   
   $wpht_id=get_the_ID();
-  $wpht_array=get_option('wpht_idstohide'); 
-  $wpht_post_select=$_POST['wp_hidetitle']; 
+  $wpht_array=get_option('wpht_idstohide');
+  $wpht_post_select=$_POST['wp_hidetitle'];
+  $wpht_selectors=get_option('wpht_selectors'); 
+  $wpht_post_selectors=$_POST['wp_selectors'];
+   
   if( ! empty( $wpht_post_select ) ) {
     if ($wpht_post_select==='hide')
       {
@@ -105,6 +124,8 @@ function hidethat_meta_box_save(){
         }
       }
     }
+  $wpht_selectors[$wpht_id]=$wpht_post_selectors;
+  update_option('wpht_selectors',$wpht_selectors);
 }  
 
 add_action( 'add_meta_boxes', 'add_hidethat_meta_box' );
@@ -125,10 +146,16 @@ function wpht_init_head (){
 $wpht_array=get_option('wpht_idstohide');
 $wpht_id=get_the_ID();
 $wpht_class2hide=get_option('wpht_class2hide');
-if($wpht_id && in_array($wpht_id,$wpht_array) && $wpht_class2hide!==''){
+$wpht_selectors=get_option('wpht_selectors');
+if($wpht_id && in_array($wpht_id,$wpht_array) && $wpht_class2hide!=='' && $wpht_selectors[$wpht_id]==''){
   $wpht_class2hide=str_replace(' ','',$wpht_class2hide);
   $wpht_class2hide=str_replace(',',', ',$wpht_class2hide);
   echo '<style type="text/css">'.$wpht_class2hide.'{display: none !important;}</style>';
+}else if ($wpht_id && in_array($wpht_id,$wpht_array) && $wpht_selectors[$wpht_id]!=='')
+{
+  $wpht_selectors[$wpht_id]=str_replace(' ','',$wpht_selectors[$wpht_id]);
+  $wpht_selectors[$wpht_id]=str_replace(',',', ',$wpht_selectors[$wpht_id]);
+  echo '<style type="text/css">'.$wpht_selectors[$wpht_id].'{display: none !important;}</style>';
 }
 }
 add_action('wp_head', 'wpht_init_head');
